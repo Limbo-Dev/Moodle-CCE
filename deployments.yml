@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mariadb
+  namespace: default
+  labels:
+    environment: moodle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb
+      environment: moodle
+  serviceName: "mariadb"
+  template:
+    metadata:
+      labels:
+        app: mariadb
+        environment: moodle
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - 172.16.0.174
+      containers:
+      - name: mariadb-moodle
+        image: docker.io/bitnami/mariadb:11.2
+        env:
+          - name: MARIADB_USER
+            value: "bn_moodle"
+          - name: ALLOW_EMPTY_PASSWORD
+            value: "yes"
+          - name: MARIADB_DATABASE
+            value: "bitnami_moodle"
+          - name: MARIADB_CHARACTER_SET
+            value: "utf8mb4"
+          - name: MARIADB_COLLATE
+            value: "utf8mb4_unicode_ci"
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: pvc-obs-mariadb    #Volume name, which must be the same as the volume name in the volumes field.
+          mountPath: "bitnami/"  #Location where the storage volume is mounted
+      imagePullSecrets:
+        - name: obs-secret
+      volumes:
+        - name: pvc-obs-mariadb   #Volume name, which can be customized.
+          persistentVolumeClaim:
+            claimName: mariadb    #Name of the created PVC.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moodle-demo
+  namespace: default
+  labels:
+    environment: moodle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moodle-app
+      environment: moodle
+  template:
+    metadata:
+      labels:
+        app: moodle-app
+        environment: moodle
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - 172.16.0.174
+      containers:
+      - name: moodle-demo
+        image: bitnami/moodle:4.3
+        env:
+          - name: MOODLE_DATABASE_HOST
+            value: "mariadb"
+          - name: MOODLE_DATABASE_PORT_NUMBER
+            value: "3306"
+          - name: MOODLE_DATABASE_USER
+            value: "bn_moodle"
+          - name: MOODLE_DATABASE_NAME
+            value: "bitnami_moodle"
+          - name: ALLOW_EMPTY_PASSWORD
+            value: "yes"
+          #- name: MOODLE_DATA_DIR
+          #  value: "bitnami/moodledata"
+          #- name: MOODLE_DATA_TO_PERSIST
+          #  value: "bitnami/moodle/"
+        resources:
+          limits:
+            cpu: 4
+            memory: 4Gi
+          requests:
+            cpu: 1
+            memory: 2Gi
+        ports:
+        - containerPort: 8080
+        - containerPort: 8443
+        volumeMounts:
+        - name: pvc-obs-moodle    #Volume name, which must be the same as the volume name in the volumes field.
+          mountPath: "bitnami/"
+        #  subPath: "moodledata/"  #Location where the storage volume is mounted
+        #- name: pvc-obs-moodledata    #Volume name, which must be the same as the volume name in the volumes field.
+        #  mountPath: "bitnami/moodle/"
+        #  subPath: "moodle/"
+      imagePullSecrets:
+        - name: obs-secret
+      volumes:
+        - name: pvc-obs-moodle    #Volume name, which can be customized.
+          persistentVolumeClaim:
+            claimName: moodledata   #Name of the created PVC.

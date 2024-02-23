@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/provisioned-by: everest-csi-provisioner
+    everest.io/reclaim-policy: retain-volume-only      # (Optional) The PV is deleted while the underlying volume is retained.
+  name: moodle    # PV name.
+spec:
+  accessModes:
+  - ReadWriteMany      # Access mode. The value must be ReadWriteMany for SFS.
+  capacity:
+    storage: 100Gi     # SFS volume capacity.
+  csi:
+    driver: sfsturbo.csi.everest.io   # Dependent storage driver for the mounting.
+    fsType: nfs
+    volumeHandle: 6d4fd51d-d381-4a62-9307-7c92a062c7a3   # SFS Capacity-Oriented volume ID.
+    volumeAttributes:
+      everest.io/share-export-location: 6d4fd51d-d381-4a62-9307-7c92a062c7a3.sfsturbo.internal:/  # Shared path of the SFS volume.
+      storage.kubernetes.io/csiProvisionerIdentity: everest-csi-provisioner
+  persistentVolumeReclaimPolicy: Retain    # Reclaim policy.
+  storageClassName: csi-sfsturbo               # Storage class name. csi-nas indicates that SFS Capacity-Oriented is used.
+  #mountOptions: []                         # Mount options.
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/provisioned-by: everest-csi-provisioner
+    everest.io/reclaim-policy: retain-volume-only      # (Optional) The PV is deleted while the underlying volume is retained.
+  name: moodledata    # PV name.
+spec:
+  accessModes:
+  - ReadWriteMany      # Access mode. The value must be ReadWriteMany for SFS.
+  capacity:
+    storage: 100Gi     # SFS volume capacity.
+  csi:
+    driver: sfsturbo.csi.everest.io   # Dependent storage driver for the mounting.
+    fsType: nfs
+    volumeHandle: 6d4fd51d-d381-4a62-9307-7c92a062c7a3   # SFS Capacity-Oriented volume ID.
+    volumeAttributes:
+      everest.io/share-export-location: 6d4fd51d-d381-4a62-9307-7c92a062c7a3.sfsturbo.internal:/  # Shared path of the SFS volume.
+      storage.kubernetes.io/csiProvisionerIdentity: everest-csi-provisioner
+  persistentVolumeReclaimPolicy: Retain    # Reclaim policy.
+  storageClassName: csi-sfsturbo               # Storage class name. csi-nas indicates that SFS Capacity-Oriented is used.
+  #mountOptions: []                         # Mount options.
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/provisioned-by: everest-csi-provisioner
+    everest.io/reclaim-policy: retain-volume-only      # (Optional) The PV is deleted while the underlying volume is retained.
+  name: mariadb    # PV name.
+spec:
+  accessModes:
+  - ReadWriteMany      # Access mode. The value must be ReadWriteMany for SFS.
+  capacity:
+    storage: 100Gi     # SFS volume capacity.
+  csi:
+    driver: sfsturbo.csi.everest.io   # Dependent storage driver for the mounting.
+    fsType: nfs
+    volumeHandle: 6d4fd51d-d381-4a62-9307-7c92a062c7a3   # SFS Capacity-Oriented volume ID.
+    volumeAttributes:
+      everest.io/share-export-location: 6d4fd51d-d381-4a62-9307-7c92a062c7a3.sfsturbo.internal:/  # Shared path of the SFS volume.
+      storage.kubernetes.io/csiProvisionerIdentity: everest-csi-provisioner
+  persistentVolumeReclaimPolicy: Retain    # Reclaim policy.
+  storageClassName: csi-sfsturbo               # Storage class name. csi-nas indicates that SFS Capacity-Oriented is used.
+  #mountOptions: []                         # Mount options.
+

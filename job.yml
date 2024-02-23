@@ -1,0 +1,23 @@
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-services
+spec:
+  template:
+    spec:
+      containers:
+      - name: init-services
+        image: busybox:latest
+        command: ['sh','-c']
+        args:
+          - |
+            mkdir root/mariadb/
+            mkdir root/moodle/
+            mkdir root/moodledata/
+        volumeMount:
+          - name: 
+      restartPolicy: Never
+  backoffLimit: 4
+
