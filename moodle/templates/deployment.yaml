@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.moodle.fullname }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- range $key, $val := .Values.moodle.deploymentlabels}}
+    {{ $key }}: {{ $val }}
+    {{- end}}
+spec:
+  replicas: {{ .Values.moodle.replicascount }}
+  selector:
+    matchLabels:
+      {{- $containerlabels := .Values.moodle.containerlabels | toYaml}}
+      {{- $containerlabels | nindent 8}}
+  template:
+    metadata:
+      labels:
+        {{- $containerlabels := .Values.moodle.containerlabels | toYaml}}
+        {{- $containerlabels | nindent 8}}
+    spec:
+      containers:
+      - name: {{ .Values.moodle.fullname }}
+        image: "{{ .Values.moodle.image.repository }}:{{ .Values.moodle.image.tag }}"
+        env:
+          {{- $env := .Values.moodle.spec.env | toYaml }}
+          {{- $arr := $env | fromYamlArray }}
+          {{- range $val := $arr }}
+          - name: {{ $val.name }}
+            value: {{ $val.value | quote}}
+          {{- end }}
+        {{- if eq .Values.moodle.spec.resources.enabled true}}
+        resources:
+          limits:
+            cpu: {{ .Values.moodle.spec.resources.limits.cpu }}
+            memory: {{ .Values.moodle.spec.resources.limits.memory }}
+          requests:
+            cpu: {{ .Values.moodle.spec.resources.requests.cpu }}
+            memory: {{ .Values.moodle.spec.resources.requests.memory }}
+        {{- end }}
+        ports:
+          {{- $containerports := .Values.moodle.spec.ports | toYaml}}
+          {{- $containerports | nindent 10}}
+        volumeMounts:
+          - name: {{ .Values.moodle.volume.name }}
+            mountPath: {{ .Values.moodle.spec.volumeMounts.mountPath }}
+      imagePullSecrets:
+        - name: key-access
+      volumes:
+        - name: {{ .Values.moodle.volume.name }}
+          persistenVolumeClaim:
+            claimName: {{ .Values.moodle.volume.name }}
+      {{- if eq .Values.moodle.spec.nodeSelector.enabled true}}
+      nodeSelector:
+        name: {{ .Values.moodle.spec.nodeSelector.name}}
+      {{- end }}
+---

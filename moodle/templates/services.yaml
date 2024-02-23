@@ -1,0 +1,29 @@
+{{- with .Values.mariadb }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .service.name }}
+spec:
+  ports:
+  {{- $ports := .service.spec.ports | toYaml }}
+    {{- $ports | nindent 4 }}
+  selector:
+    app: {{ .containerlabels.app }}
+{{- end }}
+---
+{{- with .Values.moodle }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .service.name }}
+  annotations:
+    {{- $ann := .service.annotations | toYaml }}
+    {{- $ann | nindent 4 }}
+spec:
+  type: {{ .service.spec.type }}
+  ports:
+    {{- $ports := .service.spec.ports | toYaml }}
+    {{- $ports | nindent 4 }}
+  selector:
+    app: {{ .containerlabels.app }}
+{{- end }}
