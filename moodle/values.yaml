@@ -2,8 +2,8 @@ namespace: default
 
 secret:
   name: key-access
-  ak: Ulg1VkRXVVlKVVdFQ09OMlpFREo=
-  sk: UVJFYjlNQnRKYklqQksxWmJQN3UzRWxsMVNYQ1M4dnE3cllYNzk2Qg==
+  ak: <enconded access key> #use echo -n <your access key>|base64 to encode the key
+  sk: <enconded secret key> #use echo -n <your secret key>|base64 to encode the key
 
 moodle:
 #name of the deployment
