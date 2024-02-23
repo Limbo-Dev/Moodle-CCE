@@ -13,9 +13,9 @@ spec:
   csi:
     driver: sfsturbo.csi.everest.io   # Dependent storage driver for the mounting.
     fsType: nfs
-    volumeHandle: 6d4fd51d-d381-4a62-9307-7c92a062c7a3   # SFS Capacity-Oriented volume ID.
+    volumeHandle: <SFS volumeid>   # SFS Capacity-Oriented volume ID.
     volumeAttributes:
-      everest.io/share-export-location: 6d4fd51d-d381-4a62-9307-7c92a062c7a3.sfsturbo.internal:/  # Shared path of the SFS volume.
+      everest.io/share-export-location: <SFS volume share path>  # Shared path of the SFS volume.
       storage.kubernetes.io/csiProvisionerIdentity: everest-csi-provisioner
   persistentVolumeReclaimPolicy: Retain    # Reclaim policy.
   storageClassName: csi-sfsturbo               # Storage class name. csi-nas indicates that SFS Capacity-Oriented is used.
@@ -36,9 +36,9 @@ spec:
   csi:
     driver: sfsturbo.csi.everest.io   # Dependent storage driver for the mounting.
     fsType: nfs
-    volumeHandle: 6d4fd51d-d381-4a62-9307-7c92a062c7a3   # SFS Capacity-Oriented volume ID.
+    volumeHandle: <SFS volumeid>   # SFS Capacity-Oriented volume ID.
     volumeAttributes:
-      everest.io/share-export-location: 6d4fd51d-d381-4a62-9307-7c92a062c7a3.sfsturbo.internal:/  # Shared path of the SFS volume.
+      everest.io/share-export-location: <SFS volume share path>  # Shared path of the SFS volume.
       storage.kubernetes.io/csiProvisionerIdentity: everest-csi-provisioner
   persistentVolumeReclaimPolicy: Retain    # Reclaim policy.
   storageClassName: csi-sfsturbo               # Storage class name. csi-nas indicates that SFS Capacity-Oriented is used.
@@ -59,9 +59,9 @@ spec:
   csi:
     driver: sfsturbo.csi.everest.io   # Dependent storage driver for the mounting.
     fsType: nfs
-    volumeHandle: 6d4fd51d-d381-4a62-9307-7c92a062c7a3   # SFS Capacity-Oriented volume ID.
+    volumeHandle: <SFS volumeid>   # SFS Capacity-Oriented volume ID.
     volumeAttributes:
-      everest.io/share-export-location: 6d4fd51d-d381-4a62-9307-7c92a062c7a3.sfsturbo.internal:/  # Shared path of the SFS volume.
+      everest.io/share-export-location: <SFS volume share path>  # Shared path of the SFS volume.
       storage.kubernetes.io/csiProvisionerIdentity: everest-csi-provisioner
   persistentVolumeReclaimPolicy: Retain    # Reclaim policy.
   storageClassName: csi-sfsturbo               # Storage class name. csi-nas indicates that SFS Capacity-Oriented is used.
