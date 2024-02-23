@@ -1,4 +1,6 @@
+
 namespace: default
+
 
 secret:
   name: key-access
@@ -107,6 +109,13 @@ moodle:
           name: http3
       selector:
         app: moodle-app
+#autoscaling
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 10
+    #targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 75
 
 mariadb:
 #stateful name
@@ -180,6 +189,13 @@ mariadb:
           targetPort: 3306
       selector:
         app: mariadb
+#autoscaling
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 10
+    #targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 75
 
 volumes:
 #note: every type of persitent volume is dynamically created
