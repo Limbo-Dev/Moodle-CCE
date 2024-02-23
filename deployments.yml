@@ -44,7 +44,7 @@ spec:
           persistentVolumeClaim:
             claimName: mariadb    #Name of the created PVC.
       nodeSelector:
-        - name: moodle
+        name: moodle
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -107,4 +107,4 @@ spec:
           persistentVolumeClaim:
             claimName: moodledata   #Name of the created PVC.
       nodeSelector:
-        - name: moodle
+        name: moodle
