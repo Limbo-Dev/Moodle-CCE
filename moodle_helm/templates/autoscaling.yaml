@@ -6,6 +6,7 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
+    kind: Deployment
     app: {{ .Values.moodle.fullname }}
   minReplicas: {{ .Values.moodle.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.moodle.autoscaling.maxReplicas }}
@@ -36,6 +37,7 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
+    kind: Statefulset
     app: {{ .Values.mariadb.fullname }}
   minReplicas: {{ .Values.mariadb.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.mariadb.autoscaling.maxReplicas }}
