@@ -37,7 +37,7 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: Statefulset
+    kind: StatefulSet
     app: {{ .Values.mariadb.fullname }}
   minReplicas: {{ .Values.mariadb.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.mariadb.autoscaling.maxReplicas }}
