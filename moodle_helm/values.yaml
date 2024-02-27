@@ -1,11 +1,10 @@
-
 namespace: default
 
 
 secret:
   name: key-access
-  ak: <enconded access key> #use echo -n <your access key>|base64 to encode the key
-  sk: <enconded secret key> #use echo -n <your secret key>|base64 to encode the key
+  ak: <encoded_access_key> #use echo -n <your access key>|base64 to encode the key
+  sk: <encoded_secret_key> #use echo -n <your secret key>|base64 to encode the key
 
 moodle:
 #name of the deployment
@@ -45,7 +44,7 @@ moodle:
 
 #resources limits
     resources:
-      enabled: true
+      enabled: false
       limits:
         cpu: 4
         memory: 4Gi
@@ -64,15 +63,19 @@ moodle:
 
 #node selector for specific node
     nodeSelector:
-      enabled: true
+      enabled: false
       name: moodle
 
 #persistent volume claim
   volume:
 #persistent volume claim name
-    name: moodledata
-    
     storage: 200Gi
+    dynamic_provision: true
+    type: evs
+    #only for sfs provisioning
+    share_export_location: <your_location>  # Shared path of the SFS volume.
+    id: <your_volume_id>
+    reclaim_policy: retain-volume-only
 
 #service to access the moodle pod
   service:
@@ -161,7 +164,7 @@ mariadb:
         mountPath: bitnami/
 #resources limits
     resources:
-      enabled: true
+      enabled: false
       limits:
         cpu: 4
         memory: 4Gi
@@ -172,14 +175,19 @@ mariadb:
       - name: obs-secret
 #enable for specific node
     nodeSelector:
-      enabled: true
+      enabled: false
       name: "moodle"
 
 #persistent volume claim
   volume:
-    name: mariadb
     storage: 100Gi
-        
+    dynamic_provision: false
+    type: evs
+    #only for sfs provisioning
+    share_export_location: <your_location>  # Shared path of the SFS volume.
+    id: <volume_id>
+    reclaim_policy: retain-volume-only
+
 #Cluster IP for internal access
   service:
     name: mariadb
@@ -191,35 +199,24 @@ mariadb:
         app: mariadb
 #autoscaling
   autoscaling:
-    enabled: true
+    enabled: false
     minReplicas: 1
     maxReplicas: 10
     #targetCPUUtilizationPercentage: 80
     targetMemoryUtilizationPercentage: 75
 
 volumes:
-#note: every type of persitent volume is dynamically created
 #For more information about regions and availability zones see https://developer.huaweicloud.com/intl/en-us/endpoint
 #Elastic Volume Services
+  pv_reclaim_policy: Delete
   evs:
-    enabled: true
-    annotations:
-      everest.io/disk-volume-type: SAS
-    labels:
-      failure-domain.beta.kubernetes.io/regio: la-north-2
-      failure-domain.beta.kubernetes.io/zone: la-north-2c
-    spec:
-      accessModes: ReadWriteOnce #must be ReadWriteOnce
-      storageClassName: csi-disk
+    region: la-north-2
+    zone: la-north-2c
+    disk_type: GPSSD
+
+#Scalabel File System
+  sfs:
 
 #Object Storage Services
   obs:
-    enabled: false
-    annotations:
-      everest.io/obs-volume-type: STANDARD
-      csi.storage.k8s.io/fstype: obsfs
-      csi.storage.k8s.io/node-publish-secret-name: <your_secret_name>
-      csi.storage.k8s.io/node-publish-secret-namespace: <your_namespace>
-    spec:
-      accessModes: ReadWriteMany #must be ReadWriteMany
-      storageClassName: csi-obs
+    region: la-north-2

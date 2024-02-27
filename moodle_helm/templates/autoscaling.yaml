@@ -2,11 +2,12 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: autoscaler
+  name: {{ .Values.moodle.fullname }}-autoscaler
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    app: {{ .Values.moodle.fullname }}
+    kind: Deployment
+    name: {{ .Values.moodle.fullname }}
   minReplicas: {{ .Values.moodle.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.moodle.autoscaling.maxReplicas }}
   metrics:
@@ -32,11 +33,12 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: autoscaler
+  name: {{ .Values.mariadb.fullname}}-autoscaler
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    app: {{ .Values.mariadb.fullname }}
+    kind: StatefulSet
+    name: {{ .Values.mariadb.fullname }}
   minReplicas: {{ .Values.mariadb.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.mariadb.autoscaling.maxReplicas }}
   metrics:

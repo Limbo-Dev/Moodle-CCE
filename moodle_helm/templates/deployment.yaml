@@ -42,14 +42,14 @@ spec:
           {{- $containerports := .Values.moodle.spec.ports | toYaml}}
           {{- $containerports | nindent 10}}
         volumeMounts:
-          - name: {{ .Values.moodle.volume.name }}
+          - name: {{ .Values.moodle.fullname | replace "-demo" "data" }}
             mountPath: {{ .Values.moodle.spec.volumeMounts.mountPath }}
       imagePullSecrets:
         - name: key-access
       volumes:
-        - name: {{ .Values.moodle.volume.name }}
+        - name: {{ .Values.moodle.fullname | replace "-demo" "data" }}
           persistenVolumeClaim:
-            claimName: {{ .Values.moodle.volume.name }}
+            claimName: {{ .Values.moodle.fullname }}-pvc
       {{- if eq .Values.moodle.spec.nodeSelector.enabled true}}
       nodeSelector:
         name: {{ .Values.moodle.spec.nodeSelector.name}}

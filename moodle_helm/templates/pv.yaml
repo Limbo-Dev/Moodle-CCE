@@ -1,0 +1,157 @@
+---
+{{- if not .Values.moodle.volume.dynamic_provision}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.moodle.fullname }}-pv
+{{- if eq (.Values.moodle.volume.type | toString) "evs"}}
+  annotations:
+    pv.kubernetes.io/provisioned-by: everest-csi-provisioner
+    everest.io/reclaim-policy: {{ .Values.moodle.volume.reclaim_policy}}
+  labels:
+    failure-domain.beta.kubernetes.io/region: {{ .Values.volumes.evs.region }}
+    failure-domain.beta.kubernetes.io/zone: {{ .Values.volumes.evs.zone }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: {{ .Values.moodle.volume.storage }}
+  csi:
+    driver: disk.csi.everest.io
+    fsType: ext4
+    volumeHandle: {{ .Values.moodle.volume.id}}
+    volumeAttributes:
+      everest.io/disk-mode: SCSI
+      everest.io/disk-volume-type: {{ .Values.volumes.evs.disk_type }}
+      storage.kubernetes.io/csiProvisionerIdentity: everest-csi-provisioner
+  persistentVolumeReclaimPolicy: {{ .Values.volumes.pv_reclaim_policy}}
+  storageClassName: csi-disk
+  claimRef:
+    name: {{ .Values.moodle.fullname }}-pvc
+    namespace: {{ .Values.namespace}}
+{{- else if eq (.Values.moodle.volume.type | toString) "sfs"}}
+  annotations:
+    pv.kubernetes.io/provisioned-by: everest-csi-provisioner
+    everest.io/reclaim-policy: {{ .Values.moodle.volume.reclaim_policy}}
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: {{ .Values.moodle.volume.storage }}
+  csi:
+    driver: disk.csi.everest.io
+    fsType: nfs
+    volumeHandle: {{ .Values.moodle.volume.id}}
+    volumeAttributes:
+      everest.io/share-export-location: {{ .Values.moodle.volume.share_export_location }}
+      storage.kubernetes.io/csiProvisionerIdentity: everest-csi-provisioner
+  persistentVolumeReclaimPolicy: {{ .Values.volumes.pv_reclaim_policy }}
+  storageClassName: csi-nas
+  claimRef:
+    name: {{ .Values.moodle.fullname }}-pvc
+    namespace: {{ .Values.namespace}}
+{{- else if eq (.Values.moodle.volume.type | toString) "obs"}}
+  annotations:
+    pv.kubernetes.io/provisioned-by: everest-csi-provisioner
+    everest.io/reclaim-policy: {{ .Values.moodle.volume.reclaim_policy}}
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: {{ .Values.moodle.volume.storage }}
+  csi:
+    driver: obs.csi.everest.io
+    volumeHandle: {{ .Values.moodle.volume.id}}
+    volumeAttributes:
+      storage.kubernetes.io/csiProvisionerIdentity: everest-csi-provisioner
+      everest.io/obs-volume-type: STANDARD
+      everest.io/region: {{ .Values.volumes.evs.region }}
+    nodePublishSecretRef:
+      name: {{ .Values.secret.name}}
+      namespace: {{ .Values.namespace}}
+  persistentVolumeReclaimPolicy: {{ .Values.volumes.pv_reclaim_policy }}
+  storageClassName: csi-obs
+  claimRef:
+    name: {{ .Values.moodle.fullname }}-pvc
+    namespace: {{ .Values.namespace}}
+{{- end}}
+{{- end}}
+---
+{{- if not .Values.mariadb.volume.dynamic_provision}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.mariadb.fullname }}-pv
+{{- if eq (.Values.mariadb.volume.type | toString) "evs"}}
+  annotations:
+    pv.kubernetes.io/provisioned-by: everest-csi-provisioner
+    everest.io/reclaim-policy: {{ .Values.mariadb.volume.reclaim_policy}}
+  labels:
+    failure-domain.beta.kubernetes.io/region: {{ .Values.volumes.evs.region }}
+    failure-domain.beta.kubernetes.io/zone: {{ .Values.volumes.evs.zone }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: {{ .Values.mariadb.volume.storage }}
+  csi:
+    driver: disk.csi.everest.io
+    fsType: ext4
+    volumeHandle: {{ .Values.mariadb.volume.id}}
+    volumeAttributes:
+      everest.io/disk-mode: SCSI
+      everest.io/disk-volume-type: {{ .Values.volumes.evs.disk_type }}
+      storage.kubernetes.io/csiProvisionerIdentity: everest-csi-provisioner
+  persistentVolumeReclaimPolicy: {{ .Values.volumes.pv_reclaim_policy}}
+  storageClassName: csi-disk
+  claimRef:
+    name: {{ .Values.mariadb.fullname }}-pvc
+    namespace: {{ .Values.namespace}}
+{{- else if eq (.Values.mariadb.volume.type | toString) "sfs"}}
+  annotations:
+    pv.kubernetes.io/provisioned-by: everest-csi-provisioner
+    everest.io/reclaim-policy: {{ .Values.mariadb.volume.reclaim_policy}}
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: {{ .Values.mariadb.volume.storage }}
+  csi:
+    driver: disk.csi.everest.io
+    fsType: nfs
+    volumeHandle: {{ .Values.mariadb.volume.id}}
+    volumeAttributes:
+      everest.io/share-export-location: {{ .Values.mariadb.volume.share_export_location }}
+      storage.kubernetes.io/csiProvisionerIdentity: everest-csi-provisioner
+  persistentVolumeReclaimPolicy: {{ .Values.volumes.pv_reclaim_policy }}
+  storageClassName: csi-nas
+  claimRef:
+    name: {{ .Values.mariadb.fullname }}-pvc
+    namespace: {{ .Values.namespace}}
+{{- else if eq (.Values.mariadb.volume.type | toString) "obs"}}
+  annotations:
+    pv.kubernetes.io/provisioned-by: everest-csi-provisioner
+    everest.io/reclaim-policy: {{ .Values.mariadb.volume.reclaim_policy}}
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: {{ .Values.mariadb.volume.storage }}
+  csi:
+    driver: obs.csi.everest.io
+    volumeHandle: {{ .Values.mariadb.volume.id}}
+    volumeAttributes:
+      storage.kubernetes.io/csiProvisionerIdentity: everest-csi-provisioner
+      everest.io/obs-volume-type: STANDARD
+      everest.io/region: {{ .Values.volumes.evs.region }}
+    nodePublishSecretRef:
+      name: {{ .Values.secret.name}}
+      namespace: {{ .Values.namespace}}
+  persistentVolumeReclaimPolicy: {{ .Values.volumes.pv_reclaim_policy }}
+  storageClassName: csi-obs
+  claimRef:
+    name: {{ .Values.mariadb.fullname }}-pvc
+    namespace: {{ .Values.namespace}}
+{{- end}}
+{{- end}}
+
