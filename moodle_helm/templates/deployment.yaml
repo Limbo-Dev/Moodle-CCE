@@ -48,7 +48,7 @@ spec:
         - name: key-access
       volumes:
         - name: {{ .Values.moodle.fullname | replace "-demo" "data" }}
-          persistenVolumeClaim:
+          persistentVolumeClaim:
             claimName: {{ .Values.moodle.fullname }}-pvc
       {{- if eq .Values.moodle.spec.nodeSelector.enabled true}}
       nodeSelector:
