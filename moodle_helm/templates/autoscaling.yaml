@@ -7,7 +7,11 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
+<<<<<<< HEAD
     name: {{ .Values.moodle.fullname }}
+=======
+    app: {{ .Values.moodle.fullname }}
+>>>>>>> 177f1eb1801f39b91a7106330401160586335c76
   minReplicas: {{ .Values.moodle.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.moodle.autoscaling.maxReplicas }}
   metrics:
@@ -38,7 +42,11 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: StatefulSet
+<<<<<<< HEAD
     name: {{ .Values.mariadb.fullname }}
+=======
+    app: {{ .Values.mariadb.fullname }}
+>>>>>>> 177f1eb1801f39b91a7106330401160586335c76
   minReplicas: {{ .Values.mariadb.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.mariadb.autoscaling.maxReplicas }}
   metrics:
