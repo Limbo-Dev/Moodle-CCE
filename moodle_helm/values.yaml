@@ -14,7 +14,7 @@ moodle:
   image:
     repository: bitnami/moodle
     pullPolicy: IfNotPresent
-    tag: "4.3"
+    tag: 4.3
 
 #replicas
   replicascount: 1
@@ -40,11 +40,11 @@ moodle:
       - name: MOODLE_DATABASE_NAME
         value: "bitnami_moodle"
       - name: ALLOW_EMPTY_PASSWORD
-        value: yes
+        value: "yes"
 
 #resources limits
     resources:
-      enabled: false
+      enabled: true
       limits:
         cpu: 4
         memory: 4Gi
@@ -63,18 +63,18 @@ moodle:
 
 #node selector for specific node
     nodeSelector:
-      enabled: false
+      enabled: true
       name: moodle
 
 #persistent volume claim
   volume:
 #persistent volume claim name
     storage: 200Gi
-    dynamic_provision: true
+    dynamic_provision: false
     type: evs
     #only for sfs provisioning
     share_export_location: <your_location>  # Shared path of the SFS volume.
-    id: <your_volume_id>
+    id: <volume_id>
     reclaim_policy: retain-volume-only
 
 #service to access the moodle pod
@@ -149,7 +149,7 @@ mariadb:
       - name: MARIADB_USER
         value: "bn_moodle"
       - name: ALLOW_EMPTY_PASSWORD
-        value: yes
+        value: "yes"
       - name: MARIADB_DATABASE
         value: "bitnami_moodle"
       - name: MARIADB_CHARACTER_SET
@@ -175,8 +175,8 @@ mariadb:
       - name: obs-secret
 #enable for specific node
     nodeSelector:
-      enabled: false
-      name: "moodle"
+      enabled: true
+      name: moodle
 
 #persistent volume claim
   volume:
