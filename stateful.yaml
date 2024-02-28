@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mariadb
+  namespace: default
+  labels:
+    environment: moodle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb
+      environment: moodle
+  serviceName: "mariadb"
+  template:
+    metadata:
+      labels:
+        app: mariadb
+        environment: moodle
+    spec:
+      containers:
+      - name: mariadb-moodle
+        image: docker.io/bitnami/mariadb:11.2
+        env:
+          - name: MARIADB_USER
+            value: "bn_moodle"
+          - name: ALLOW_EMPTY_PASSWORD
+            value: "yes"
+          - name: MARIADB_DATABASE
+            value: "bitnami_moodle"
+          - name: MARIADB_CHARACTER_SET
+            value: "utf8mb4"
+          - name: MARIADB_COLLATE
+            value: "utf8mb4_unicode_ci"
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: pvc-obs-mariadb    #Volume name, which must be the same as the volume name in the volumes field.
+          mountPath: "bitnami/"  #Location where the storage volume is mounted
+      imagePullSecrets:
+        - name: obs-secret
+      volumes:
+        - name: pvc-obs-mariadb   #Volume name, which can be customized.
+          persistentVolumeClaim:
+            claimName: mariadb    #Name of the created PVC.
+      nodeSelector:
+        name: moodle
