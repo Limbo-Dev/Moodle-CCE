@@ -40,6 +40,14 @@ following this configuration:
 note that there are 2 ways to deploy moodle on CCE, K8s manifests and Helm Chart, the major difference between them is the dificulty during configuration, if you are not familiar with Helm you're advice to use K8s Manifist for extra configurations, and you do know how helm works you can use [helm playground](https://helm-playground.com/) to see the output manifest using Helm Charts.
 ### Kubernetes Manifest
 #### Deployment File
+In this file you will find out the image that is being used to deploy moodle and the deployment configuration, the section that you should get more information about are:
+- image: the image that is being used is from bitnami, if you are wanting to deploy a newest version of moodle you should take a look of their [docker image](https://hub.docker.com/r/bitnami/moodle).
+- environment variables: the environment variables that is being used in this demo is the default values from the image, you can change it depending on your personal configurations
+- resources: change the resources limits and requests as you need.
+- containers ports: these are the default container from the [docker image](https://hub.docker.com/r/bitnami/moodle), as you can see they are using port 8080 and 8443, avoiding port 80 and 443 due to cybersecurity reasons.
+- volume mounts: the mountpath is important to leave it as default, because the path is where the instalation script install the moodle files.
+- image pull secrets: the name is the secret object that is being created with the secret manifest it contains the Access Key and Secret Key values.
+- node selector: this section can be deleted if you do not want to deploy the pods on a specific node.
 
 #### StatefulSet
 
