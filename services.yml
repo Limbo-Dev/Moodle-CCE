@@ -18,12 +18,12 @@ metadata:
     kubernetes.io/elb.autocreate:
         '{
             "type": "public",
-            "bandwidth_name": "caddy",
+            "bandwidth_name": "moodle",
             "bandwidth_chargemode":"traffic",
             "bandwidth_size": 300,
             "bandwidth_sharetype": "PER",
             "eip_type": "5_bgp",
-            "name": "caddy"
+            "name": "moodle"
         }'
 spec:
   type: LoadBalancer
