@@ -41,6 +41,8 @@ note that there are 2 ways to deploy moodle on CCE, K8s manifests and Helm Chart
 ### Kubernetes Manifest
 #### Deployment File
 
+#### StatefulSet
+
 #### PVC and PV
 
 #### Secret
