@@ -96,3 +96,4 @@ In this manifest you can find the autoscaling policies for Moodle pod, depending
 
 Only deployment kind is supported by Huawei Cloud CCE Cluster, Statefulset is not supported yet.
 ### Helm Chart
+Advice: copy the values.yaml file data and verfiy each file with it in [helm playground](https://helm-playground.com/) or in other ways that is suitable for you, so you can see what is helm genereting.
