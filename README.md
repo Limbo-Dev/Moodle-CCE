@@ -1,6 +1,5 @@
 # Moodle-CCE
 ## Moodle project mounted on HuaweiCloud
-
 First is needed to create Huawei Cloud resources, such as CCE Cluster and a ECS to manage kubernetes cluster and run Helm commands, following the [hardware recommendations for moodle](https://docs.moodle.org/403/en/Installing_Moodle) it should be:
 - Disk space: 200Mb as minimum, but 5Gb is more realistic
 - CPU: 1GHz as minimum, and 2Ghz is recommended
@@ -15,7 +14,9 @@ Knowing this we can start buying the required resources:
   - Memory: 16Gb
 
 Now that we know the spec that we need, lets start by buying the resources:
-
+<p align="center">
+ <img src="https://github.com/Limbo-Dev/Moodle-CCE/blob/main/images/moodle-cce.png" />
+</p>p
 for [more information](https://support.huaweicloud.com/intl/en-us/usermanual-cce/cce_10_0028.html) about the configurations of CCE Cluster configuration visit the page.
 
 follow this configuration:
@@ -35,6 +36,14 @@ following this configuration:
   - Container Engine: Docker
   - OS: ubuntu or as you like
   - Disk size: leave it as default
+# Kubernetes Architecture
+For this demo the architecture will be looking like this:
+
+<p align="center">
+  <img src="https://github.com/Limbo-Dev/Moodle-CCE/blob/main/images/kubernetes-moodle-hld.png"/>
+</p>
+
+now that we know what are we trying to deploy is time to configure values.
 
 ## Values Configurations
 note that there are 2 ways to deploy moodle on CCE, K8s manifests and Helm Chart, the major difference between them is the dificulty during configuration, if you are not familiar with Helm you're advice to use K8s Manifist for extra configurations, and you do know how helm works you can use [helm playground](https://helm-playground.com/) to see the output manifest using Helm Charts.
