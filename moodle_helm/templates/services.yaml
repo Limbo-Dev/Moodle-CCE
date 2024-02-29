@@ -1,29 +1,25 @@
-{{- with .Values.mariadb }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .service.name }}
+  name: {{ .Values.mariadb.fullname }}
 spec:
   ports:
-  {{- $ports := .service.spec.ports | toYaml }}
+  {{- $ports := .Values.mariadb.service.ports | toYaml }}
     {{- $ports | nindent 4 }}
   selector:
-    app: {{ .containerlabels.app }}
-{{- end }}
+    app: {{ .Values.mariadb.containerlabels.app }}
 ---
-{{- with .Values.moodle }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .service.name }}
+  name: {{ .Values.moodle.fullname | replace "-demo" "-elb"}}
   annotations:
-    {{- $ann := .service.annotations | toYaml }}
+    {{- $ann := .Values.moodle.service.annotations | toYaml }}
     {{- $ann | nindent 4 }}
 spec:
-  type: {{ .service.spec.type }}
+  type: {{ .Values.moodle.service.spec.type }}
   ports:
-    {{- $ports := .service.spec.ports | toYaml }}
+    {{- $ports := .Values.moodle.service.spec.ports | toYaml }}
     {{- $ports | nindent 4 }}
   selector:
-    app: {{ .containerlabels.app }}
-{{- end }}
+    app: {{ .Values.moodle.containerlabels.app }}

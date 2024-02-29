@@ -37,7 +37,7 @@ spec:
           {{- $ports | nindent 10}}
         volumeMounts:
           - name: {{ .Values.mariadb.fullname }}
-            mountPath: {{ .Values.mariadb.spec.volumeMounts.mountPath }}
+            mountPath: "bitnami/"
       imagePullSecrets:
         - name: key-access
       volumes:

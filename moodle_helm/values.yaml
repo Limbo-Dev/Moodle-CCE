@@ -58,8 +58,6 @@ moodle:
       - containerPort: 8443
 
 #volume mount information
-    volumeMounts:
-        mountPath: bitnami/
 
 #node selector for specific node
     nodeSelector:
@@ -80,7 +78,6 @@ moodle:
 #service to access the moodle pod
   service:
 #note: the loadbalancer and publicip will be created dynamically
-    name: moodle-elb
     annotations:
       kubernetes.io/elb.class: union
       kubernetes.io/elb.autocreate:
@@ -110,8 +107,7 @@ moodle:
           targetPort: 8443
           protocol: UDP
           name: http3
-      selector:
-        app: moodle-app
+
 #autoscaling
   autoscaling:
     enabled: true
@@ -159,9 +155,6 @@ mariadb:
 #container port
     ports:
       - containerPort: 3306
-#volume mounts
-    volumeMounts:
-        mountPath: bitnami/
 #resources limits
     resources:
       enabled: false
@@ -190,13 +183,10 @@ mariadb:
 
 #Cluster IP for internal access
   service:
-    name: mariadb
-    spec:
-      ports:
-        - port: 3306
-          targetPort: 3306
-      selector:
-        app: mariadb
+    type: ClusterIP
+    ports:
+      - port: 3306
+        targetPort: 3306
 #autoscaling
   autoscaling:
     enabled: false

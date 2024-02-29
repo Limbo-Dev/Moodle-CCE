@@ -43,7 +43,7 @@ spec:
           {{- $containerports | nindent 10}}
         volumeMounts:
           - name: {{ .Values.moodle.fullname | replace "-demo" "data" }}
-            mountPath: {{ .Values.moodle.spec.volumeMounts.mountPath | quote}}
+            mountPath: "bitnami/"
       imagePullSecrets:
         - name: key-access
       volumes:
