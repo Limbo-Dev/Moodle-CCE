@@ -196,3 +196,8 @@ This section you will find the configurations for the MariaDB statefulset kind, 
 this section is only for general Persistent Volume Claim and Persistent Volume configurations and the type of disk is distributed, change the pv reclaim policy as needed.
 - evs: is important to have the region and zone same as the worker node that is going to be used to host the pod.
 - obs: is important to have the same region as the cluster.
+
+once completed the configuration need this command inside the moodle_helm directory:
+```
+helm install moodle .
+```
