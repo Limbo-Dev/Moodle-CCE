@@ -16,7 +16,7 @@ Knowing this we can start buying the required resources:
 Now that we know the spec that we need, lets start by buying the resources:
 <p align="center">
  <img src="https://github.com/Limbo-Dev/Moodle-CCE/blob/main/images/moodle-cce.png" />
-</p>p
+</p>
 for [more information](https://support.huaweicloud.com/intl/en-us/usermanual-cce/cce_10_0028.html) about the configurations of CCE Cluster configuration visit the page.
 
 follow this configuration:
@@ -51,7 +51,10 @@ note that there are 2 ways to deploy moodle on CCE, K8s manifests and Helm Chart
 #### Deployment File
 In this file you will find out the image that is being used to deploy moodle and the deployment configuration, the section that you should get more involved are:
 - image: the image that is being used is from bitnami, if you are wanting to deploy a newest version of the image you should take a look of their [Moodle Docker image](https://hub.docker.com/r/bitnami/moodle).
-- environment variables: these variables and their values are the default configuration values from the image, you can change it depending on your personal configurations, find more information about the environment variables in their [Moodle Docker image](https://hub.docker.com/r/bitnami/moodle).
+- environment variables: these variables and their values are the default configuration values from the image, you can change it depending on your personal configurations, find more information about the environment variables in their [Moodle Docker image](https://hub.docker.com/r/bitnami/moodle),
+
+Note: you should always match the MOODLE_DATABASE_HOST value with the ClusterIP who stablish communication between the database and applications, try to not change the service name of the database.
+
 - resources: change the resources limits and requests as you need.
 - containers ports: these are the default container from the [Moodle Docker image](https://hub.docker.com/r/bitnami/moodle), as you can see they are using port 8080 and 8443, avoiding port 80 and 443 due to cybersecurity reasons, thats why in this manifest we are using port 8080 and 8443.
 - volume mounts: the mountpath is important to leave it as default, because the path is where the instalation script install the moodle files.
@@ -78,7 +81,7 @@ so the section that you should be aware in this demo are:
 #### Secret
 This file is just used to store your enconded Access key and Secret key, the only used that I could find out was during OBS(Object Storage Services) dynamic and static provision, since it need to access a storage that is not being attached to the worker node.
 
-Use this command to encode your AK/SK
+Use this command to encode your AK/SK and if you dont have a AK/SK credentials visit [AK/SK crendtials creation]([https://support.huaweicloud.com/intl/en-us/usermanual-iam/iam_02_0003.html](https://support.huaweicloud.com/intl/en-us/modelarts_faq/modelarts_05_0004.html))
 ```
 echo -n <your access key>|base64
 echo -n <your secret key>|base64
@@ -95,5 +98,101 @@ The Load Balancer is using Elastic Load Balancer service from Huawei Cloud visit
 In this manifest you can find the autoscaling policies for Moodle pod, depending on the memory usage it will scale out.
 
 Only deployment kind is supported by Huawei Cloud CCE Cluster, Statefulset is not supported yet.
+
+Now that the configuration is completed, run the next commands:
+
+```
+kubectl apply -f secret.yaml
+kubectl apply -f services.yml
+kubectl apply -f pvc.yml
+kubectl apply -f stateful.yml
+kubectl apply -f deployments.yml
+kubectl apply -f hpa.yml
+```
+
 ### Helm Chart
 Advice: copy the values.yaml file data and verfiy each file with it in [helm playground](https://helm-playground.com/) or in other ways that is suitable for you, so you can see what is helm genereting.
+
+In this section we will get through the values file:
+- namespace value: just use a name for your namespace
+#### Secret 
+This section is used to generate a secret file using your encoded AK/SK for storage access or other services that are required, use these commnads to encode your AK/SK and you dont have a AK/SK credentials visit [AK/SK crendtials creation]([https://support.huaweicloud.com/intl/en-us/usermanual-iam/iam_02_0003.html](https://support.huaweicloud.com/intl/en-us/modelarts_faq/modelarts_05_0004.html))
+```
+echo -n <your access key>|base64
+echo -n <your secret key>|base64
+```
+
+#### Moodle
+This section you will find the configurations for the Moodle deployment kind, you can change the image version or the image itself, but you are advice to used bitnami image, since the image itself is already configured to work with everything listed on this documentation:
+
+- fullname: name for the deployment
+
+- image: change only the tag
+
+- replicascount: is for the number of pods that you want to have, choose based on your needs.
+
+- deployment labels and container labels: as its name stands for, these labels are isolated from each other, you can add or delete labels based on your implementation needs.
+
+- environment variables: these variables and their values are the default configuration values from the image, you can change it depending on your personal configurations, find more information about the environment variables in their [Moodle Docker image](https://hub.docker.com/r/bitnami/moodle).
+
+NOTE: you should always match the MOODLE_DATABASE_HOST value with the ClusterIP who stablish communication between the database and applications, try to not change the service name of the database.
+
+- containers ports: these are the default container from the [Moodle Docker image](https://hub.docker.com/r/bitnami/moodle), as you can see they are using port 8080 and 8443, avoiding port 80 and 443 due to cybersecurity reasons, thats why in this manifest we are using port 8080 and 8443.
+
+- reources: this section is to specify the limits and requests of compute resources for a pod, if enabled it would generate resources limits and requests in the Moodle deployment file.
+
+- node selector: this section is used to deploy the pod on a specific worker node, if enabled and a label and value is provided it will deploy on selected worker node.
+
+- volume: this section is for the persistent volume claim and persistent volume configuration
+  - for dynamic provision you only need to configure storage and disk type, Note: Scalble File Service do not support dynamic provision.
+  - for static provision depending on the type of disk you will need extra information:
+    - for [Object Storage Service](https://support.huaweicloud.com/intl/en-us/usermanual-cce/cce_10_0628.html) you will need that the region is in the same as the worker node and the volume id.
+    - for [Elastic Volume Service](https://support.huaweicloud.com/intl/en-us/usermanual-cce/cce_10_0613.html) you will need that the region and availability zone be the same as the worker node since it will be attached to the worker node directly and the volume id.
+    - for [Scalable File Service](https://support.huaweicloud.com/intl/en-us/usermanual-cce/cce_10_0617.html) you will need volume id and the share export location, this information can be found once the service is adquired.
+  
+  Note: be aware that the best type of storage to be used are SFS and EVS due to I/O speed, with OBS is slow.
+- service: this service is using Elastic Load Balancer service from Huawei Cloud visit [here](https://support.huaweicloud.com/intl/en-us/usermanual-cce/cce_10_0681.html), the section that you should get more information about it are:
+  - annotations:
+    - elb.class: is important to leave as union
+    - elb.autocreate: in this section you will find out the configuration of the ELB and EIP(Elastic IP Services)
+  - ports: do not change the target ports unless you are modifying the directly the [Moodle Docker image](https://hub.docker.com/r/bitnami/moodle) to change the ports that you want to access to the services.
+
+- autoscaling: if enabled it will generate a Horizontal Pod Autoscaling file, and will take the configuration that is set and then monitor the metrics of the deployment to autoscale when needed.
+
+#### MariaDB
+This section you will find the configurations for the MariaDB statefulset kind, you can change the image version or the image itself, but you are advice to used bitnami image, since the image itself is already configured to work with everything listed on this documentation:
+
+- fullname: name for the deployment
+
+- image: change only the tag
+
+- replicascount: is for the number of pods that you want to have, choose based on your needs.
+
+- deployment labels and container labels: as its name stands for, these labels are isolated from each other, you can add or delete labels based on your implementation needs.
+
+- environment variables: these variables and their values are the default configuration values from the image, you can change it depending on your personal configurations, find more information about the environment variables in their [Mariadb Docker image](https://hub.docker.com/r/bitnami/mariadb).
+
+- container ports: port 3306 is the default access to the database, do not change unless you modify directly the docker image.
+
+- reources: this section is to specify the limits and requests of compute resources for a pod, if enabled it would generate resources limits and requests in the Moodle deployment file.
+  
+- node selector: this section is used to deploy the pod on a specific worker node, if enabled and a label and value is provided it will deploy on selected worker node.
+
+- volume: this section is for the persistent volume claim and persistent volume configuration
+  - for dynamic provision you only need to configure storage and disk type, Note: Scalble File Service do not support dynamic provision.
+    
+  - for static provision depending on the type of disk you will need extra information:
+    - for [Object Storage Service](https://support.huaweicloud.com/intl/en-us/usermanual-cce/cce_10_0628.html) you will need that the region is in the same as the worker node and the volume id.
+    - for [Elastic Volume Service](https://support.huaweicloud.com/intl/en-us/usermanual-cce/cce_10_0613.html) you will need that the region and availability zone be the same as the worker node since it will be attached to the worker node directly and the volume id.
+    - for [Scalable File Service](https://support.huaweicloud.com/intl/en-us/usermanual-cce/cce_10_0617.html) you will need volume id and the share export location, this information can be found once the service is adquired.
+  Note: be aware that the best type of storage to be used are SFS and EVS due to I/O speed, with OBS is slow.
+
+- service: this service is just a ClusterIP for internal access to the database, you are advice to only change the port that is going to be used to access through the service and not the target port that are the container port.
+
+- autoscaling: if enabled it will generate a Horizontal Pod Autoscaling file, and will take the configuration that is set and then monitor the metrics of the deployment to autoscale when needed.
+  
+  NOTE: Huawei Cloud does not support Statefulset Horizontal Pod Autoscaling.
+#### Volumes
+this section is only for general Persistent Volume Claim and Persistent Volume configurations and the type of disk is distributed, change the pv reclaim policy as needed.
+- evs: is important to have the region and zone same as the worker node that is going to be used to host the pod.
+- obs: is important to have the same region as the cluster.
